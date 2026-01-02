@@ -778,6 +778,13 @@ tr:hover td {
         padding: 12px 16px;
         margin: -20px -10px 15px -10px;
         width: calc(100% + 20px);
+        box-sizing: border-box;
+    }
+
+    /* Ensure container is properly centered on mobile */
+    .container {
+        box-sizing: border-box;
+        margin: 0 auto;
     }
 
     .mobile-logo {
