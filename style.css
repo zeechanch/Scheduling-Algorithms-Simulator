@@ -725,6 +725,7 @@ tr:hover td {
     /* Show mobile header */
     .mobile-header {
         display: flex;
+        justify-content: center;
         align-items: center;
         gap: 10px;
         position: sticky;
@@ -743,7 +744,6 @@ tr:hover td {
 
     .mobile-logo {
         font-size: 1.5rem;
-        margin-left: 10px;
     }
 
     .mobile-title {
