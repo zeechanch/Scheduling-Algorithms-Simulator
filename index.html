@@ -87,7 +87,10 @@
                                 <th>Arrival</th>
                                 <th>Burst</th>
                                 <th>Finish</th>
-                                <th>Turnaround</th>
+                                <th>
+                                    <span class="desktop-only">Turnaround</span>
+                                    <span class="mobile-only">T.A.T</span>
+                                </th>
                                 <th>Waiting</th>
                             </tr>
                         </thead>
@@ -103,10 +106,18 @@
                 </div>
             </div> <!-- End Main Content -->
 
-            <div class="history-panel">
-                <div class="history-title-row">
+            <div class="history-panel" id="historyPanel">
+                <div class="history-title-row" onclick="toggleHistoryPanel()">
                     <h3>History</h3>
-                    <button class="clear-btn" onclick="clearHistory()">Clear</button>
+                    <div class="history-actions">
+                        <button class="toggle-btn" id="historyToggleBtn" aria-label="Toggle history">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </button>
+                        <button class="clear-btn" onclick="event.stopPropagation(); clearHistory()">Clear</button>
+                    </div>
                 </div>
                 <div class="history-list" id="historyList">
                     <!-- History items will be injected here -->

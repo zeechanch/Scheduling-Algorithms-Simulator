@@ -366,6 +366,35 @@ tr:hover td {
     transform: translateY(0);
 }
 
+.history-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.toggle-btn {
+    display: none;
+    /* Hidden on desktop */
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-main);
+    border: 1px solid var(--glass-border);
+    padding: 6px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: auto;
+    box-shadow: none;
+}
+
+.toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: none;
+}
+
+.toggle-btn svg {
+    display: block;
+}
+
 .history-list {
     display: flex;
     flex-direction: column;
@@ -696,6 +725,15 @@ tr:hover td {
     display: none;
 }
 
+/* Responsive visibility utilities */
+.mobile-only {
+    display: none;
+}
+
+.desktop-only {
+    display: inline;
+}
+
 /* ===== RESPONSIVE DESIGN ===== */
 
 /* Tablet breakpoint */
@@ -757,6 +795,15 @@ tr:hover td {
         display: none;
     }
 
+    /* Toggle visibility utilities for mobile */
+    .mobile-only {
+        display: inline;
+    }
+
+    .desktop-only {
+        display: none;
+    }
+
     body {
         padding: 20px 10px;
     }
@@ -773,10 +820,13 @@ tr:hover td {
         gap: 15px !important;
     }
 
-    /* Process header and rows - simplify grid for mobile */
+    /* Process header and rows - adjust for mobile */
     .process-header {
-        display: none;
-        /* Hide header on mobile, show labels inline instead */
+        grid-template-columns: 40px 1fr 1fr 1fr 32px;
+        gap: 5px;
+        font-size: 0.65rem;
+        padding: 0 5px;
+        margin-left: 15px;
     }
 
     .process-row {
@@ -843,10 +893,29 @@ tr:hover td {
     .history-title-row {
         margin-bottom: 12px;
         padding-bottom: 8px;
+        cursor: pointer;
     }
 
     .history-title-row h3 {
         font-size: 1.1rem;
+    }
+
+    /* Show toggle button on mobile */
+    .toggle-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Collapsed state */
+    .history-panel.collapsed .history-list {
+        display: none;
+    }
+
+    .history-panel.collapsed .history-title-row {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
     }
 
     .history-list {

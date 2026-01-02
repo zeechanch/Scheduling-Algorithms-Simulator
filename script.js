@@ -5,6 +5,16 @@ document.addEventListener('DOMContentLoaded', () => {
     addProcess(4, 1, 3);
 
     setupAllCustomSelects();
+
+    // Collapse history panel on mobile by default
+    if (window.innerWidth <= 768) {
+        const panel = document.getElementById('historyPanel');
+        const toggleBtn = document.getElementById('historyToggleBtn');
+        if (panel) {
+            panel.classList.add('collapsed');
+            if (toggleBtn) toggleBtn.style.transform = 'rotate(0deg)'; // Down arrow when collapsed
+        }
+    }
 });
 
 function togglePriority() {
@@ -507,4 +517,19 @@ function clearHistory() {
     items.forEach(item => item.remove());
 
     if (emptyMsg) emptyMsg.style.display = 'block';
+}
+
+// Toggle history panel collapse (for mobile)
+function toggleHistoryPanel() {
+    const panel = document.getElementById('historyPanel');
+    const toggleBtn = document.getElementById('historyToggleBtn');
+
+    panel.classList.toggle('collapsed');
+
+    // Rotate the chevron icon: down when collapsed, up when expanded
+    if (panel.classList.contains('collapsed')) {
+        toggleBtn.style.transform = 'rotate(0deg)'; // Down arrow
+    } else {
+        toggleBtn.style.transform = 'rotate(180deg)'; // Up arrow
+    }
 }
