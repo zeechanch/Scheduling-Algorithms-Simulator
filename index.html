@@ -41,7 +41,7 @@
 
         .container {
             width: 100%;
-            max-width: 1100px;
+            max-width: 1400px;
             position: relative;
             z-index: 1;
         }
@@ -309,6 +309,190 @@
             border: 1px dashed var(--idle);
             color: var(--idle);
         }
+
+        /* --- Layout & History Panel --- */
+        .layout-wrapper {
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+        }
+
+        .main-content {
+            flex: 1;
+            min-width: 0;
+            /* Prevents flex overflow */
+        }
+
+        .history-panel {
+            width: 320px;
+            background: var(--glass-surface);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 20px;
+            /* Reduced padding for compact look */
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            position: sticky;
+            top: 20px;
+            max-height: 85vh;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .history-panel h3 {
+            margin: 0;
+            font-size: 1.25rem;
+            color: var(--text-main);
+        }
+
+        .history-title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .clear-btn {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .clear-btn:hover {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .history-item {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px solid var(--glass-border);
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .history-algo {
+            font-weight: 700;
+            color: var(--accent);
+            font-size: 0.9rem;
+        }
+
+        .history-time {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .history-stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .h-stat {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .h-stat label {
+            font-size: 0.7rem;
+            margin-bottom: 2px;
+        }
+
+        .h-stat span {
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .mini-gantt {
+            height: 15px;
+            width: 100%;
+            display: flex;
+            /* overflow: hidden; Removed to allow markers */
+            background: rgba(255, 255, 255, 0.05);
+            margin-bottom: 10px;
+            /* Space for markers */
+            border-radius: 6px;
+        }
+
+        .mini-block {
+            height: 100%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 700;
+            overflow: hidden;
+        }
+
+        .mini-block:first-child,
+        .mini-start-time+.mini-block {
+            border-top-left-radius: 6px;
+            border-bottom-left-radius: 6px;
+        }
+
+        .mini-block:last-child {
+            border-top-right-radius: 6px;
+            border-bottom-right-radius: 6px;
+        }
+
+        .mini-time {
+            position: absolute;
+            bottom: -14px;
+            right: 0;
+            transform: translateX(50%);
+            font-size: 9px;
+            color: var(--text-muted);
+            line-height: 1;
+        }
+
+        .mini-start-time {
+            position: absolute;
+            bottom: -14px;
+            left: 0;
+            transform: translateX(-50%);
+            font-size: 9px;
+            color: var(--text-muted);
+            line-height: 1;
+        }
     </style>
 </head>
 
@@ -316,90 +500,102 @@
     <div class="container">
         <h1>CPU Scheduler Visualizer</h1>
 
-        <div class="glass-panel controls" style="grid-template-columns: repeat(2, 1fr);">
+        <div class="layout-wrapper">
 
-            <!-- ROW: Algorithm + Time Quantum + Priority -->
-            <div style="grid-column: span 2; display: flex; gap: 15px;">
-
-                <div style="flex: 1;">
-                    <label>Algorithm</label>
-                    <div class="custom-select" id="algoSelect">
-                        <div class="select-trigger">First Come First Serve (FCFS)</div>
-                        <div class="select-options">
-                            <div class="option" data-value="FCFS">First Come First Serve (FCFS)</div>
-                            <div class="option" data-value="SJF">Shortest Job First (Non-Preemptive)</div>
-                            <div class="option" data-value="SJF_PRE">Shortest Job First (Preemptive)</div>
-                            <div class="option" data-value="PRIORITY">Priority Scheduling</div>
-                            <div class="option" data-value="RR">Round Robin</div>
+            <div class="main-content">
+                <div class="glass-panel controls" style="grid-template-columns: repeat(2, 1fr);">
+                    <!-- ROW: Algorithm + Time Quantum + Priority -->
+                    <div style="grid-column: span 2; display: flex; gap: 15px;">
+                        <div style="flex: 1;">
+                            <label style="color: var(--text-main);">Algorithm</label>
+                            <div class="custom-select" id="algoSelect">
+                                <div class="select-trigger">First Come First Serve (FCFS)</div>
+                                <div class="select-options">
+                                    <div class="option" data-value="FCFS">First Come First Serve (FCFS)</div>
+                                    <div class="option" data-value="SJF">Shortest Job First (Non-Preemptive)</div>
+                                    <div class="option" data-value="SJF_PRE">Shortest Job First (Preemptive)</div>
+                                    <div class="option" data-value="PRIORITY">Priority Scheduling</div>
+                                    <div class="option" data-value="RR">Round Robin</div>
+                                </div>
+                                <input type="hidden" id="algorithm" value="FCFS">
+                            </div>
                         </div>
-                        <input type="hidden" id="algorithm" value="FCFS">
+
+                        <div style="flex: 1;">
+                            <label style="color: var(--text-main);">Time Quantum (for RR)</label>
+                            <input type="number" id="timeQuantum" value="2" min="1">
+                        </div>
+
+                        <div style="flex: 1;">
+                            <label style="color: var(--text-main);">Priority Order</label>
+                            <button id="prioToggleBtn" class="priority-toggle" onclick="togglePriority()">
+                                <span class="toggle-text left active">Lower #</span>
+                                <span class="toggle-switch"></span>
+                                <span class="toggle-text right">Higher #</span>
+                            </button>
+                            <input type="hidden" id="priorityMode" value="0">
+                        </div>
+                    </div>
+
+                    <!-- Processes Section -->
+                    <div style="grid-column: span 2;">
+                        <label style="color: var(--text-main);">Processes</label>
+                        <div class="process-header">
+                            <span>PID</span>
+                            <span>Arrival Time</span>
+                            <span>Burst Time</span>
+                            <span>Priority</span>
+                            <span></span>
+                        </div>
+                        <div id="processContainer"></div>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div style="grid-column: span 2; display: flex; gap: 10px; margin-top: 15px;">
+                        <button onclick="addProcess()" style="flex: 1;">+ Add Process</button>
+                        <button onclick="runSimulation()" style="flex: 1;">Run Simulation</button>
                     </div>
                 </div>
 
-                <div style="flex: 1;">
-                    <label>Time Quantum (for RR)</label>
-                    <input type="number" id="timeQuantum" value="2" min="1">
+                <div class="glass-panel">
+                    <table id="resultTable">
+                        <thead>
+                            <tr>
+                                <th>PID</th>
+                                <th>Arrival</th>
+                                <th>Burst</th>
+                                <th>Finish</th>
+                                <th>Turnaround</th>
+                                <th>Waiting</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
                 </div>
 
-                <div style="flex: 1;">
-                    <label>Priority Order</label>
-
-                    <button id="prioToggleBtn" class="priority-toggle" onclick="togglePriority()">
-                        <span class="toggle-text left active">Lower #</span>
-                        <span class="toggle-switch"></span>
-                        <span class="toggle-text right">Higher #</span>
-                    </button>
-
-                    <input type="hidden" id="priorityMode" value="0">
-
+                <div class="glass-panel">
+                    <h3>Gantt Chart</h3>
+                    <div id="ganttChart" class="gantt-chart"></div>
+                    <div id="stats" class="stats"></div>
                 </div>
+            </div> <!-- End Main Content -->
 
-            </div>
-
-            <!-- Processes Section -->
-            <div style="grid-column: span 2;">
-                <label>Processes</label>
-                <div class="process-header">
-                    <span>PID</span>
-                    <span>Arrival Time</span>
-                    <span>Burst Time</span>
-                    <span>Priority</span>
-                    <span></span>
+            <div class="history-panel">
+                <div class="history-title-row">
+                    <h3>History</h3>
+                    <button class="clear-btn" onclick="clearHistory()">Clear</button>
                 </div>
-                <div id="processContainer"></div>
+                <div class="history-list" id="historyList">
+                    <!-- History items will be injected here -->
+                    <div style="text-align: center; color: var(--text-muted); padding: 20px; font-style: italic;"
+                        id="emptyHistoryMsg">
+                        No runs yet.
+                    </div>
+                </div>
             </div>
 
-            <!-- Buttons -->
-            <div style="grid-column: span 2; display: flex; gap: 10px; margin-top: 15px;">
-                <button onclick="addProcess()" style="flex: 1;">+ Add Process</button>
-                <button onclick="runSimulation()" style="flex: 1;">Run Simulation</button>
-            </div>
-
-        </div>
-
-
-        <div class="glass-panel">
-            <table id="resultTable">
-                <thead>
-                    <tr>
-                        <th>PID</th>
-                        <th>Arrival</th>
-                        <th>Burst</th>
-                        <th>Finish</th>
-                        <th>Turnaround</th>
-                        <th>Waiting</th>
-                    </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="glass-panel">
-            <h3>Gantt Chart</h3>
-            <div id="ganttChart" class="gantt-chart"></div>
-            <div id="stats" class="stats"></div>
-        </div>
+        </div> <!-- End Layout Wrapper -->
     </div>
 
     <style>
@@ -474,7 +670,7 @@
             margin-bottom: 10px;
             padding: 0 10px;
             font-weight: 600;
-            color: var(--text-muted);
+            color: var(--text-main);
             font-size: 0.8rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
@@ -606,6 +802,41 @@
         .option.selected {
             background: var(--primary);
             color: white;
+        }
+
+        .history-title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .history-title-row h3 {
+            margin: 0;
+        }
+
+        .clear-btn {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            padding: 4px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: all 0.2s;
+            box-shadow: none;
+            width: auto;
+            /* Override global button width */
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+
+        .clear-btn:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: #ef4444;
+            transform: translateY(0);
+            /* Disable huge lift */
         }
     </style>
 
@@ -956,7 +1187,17 @@
 
             // 3. Render Output
             renderTable(processes);
-            renderGantt(gantt, processes[processes.length - 1].ct || gantt[gantt.length - 1].end);
+            // Calculate stats for history
+            const totalTat = processes.reduce((acc, p) => acc + p.tat, 0);
+            const totalWt = processes.reduce((acc, p) => acc + p.wt, 0);
+            const avgTat = (totalTat / processes.length).toFixed(2);
+            const avgWt = (totalWt / processes.length).toFixed(2);
+            const totalTime = processes[processes.length - 1].ct || gantt[gantt.length - 1].end;
+
+            renderGantt(gantt, totalTime);
+
+            // 4. Add to History
+            addToHistory(algo, avgTat, avgWt, gantt, totalTime);
         }
 
         function renderTable(data) {
@@ -1035,6 +1276,81 @@
 
                 ganttTimeouts.push(timeoutId);
             });
+        }
+    </script>
+    <script>
+        function addToHistory(algo, avgTat, avgWt, ganttData, totalTime) {
+            const list = document.getElementById('historyList');
+            const emptyMsg = document.getElementById('emptyHistoryMsg');
+            if (emptyMsg) emptyMsg.style.display = 'none';
+
+            const item = document.createElement('div');
+            item.className = 'history-item';
+
+            // Get timestamp
+            const timeStr = new Date().toLocaleTimeString();
+
+            // Build simplified gantt html
+            let miniGanttHtml = `<div class="mini-start-time">0</div>`;
+
+            ganttData.forEach(block => {
+                const duration = block.end - block.start;
+                const widthPct = (duration / totalTime) * 100;
+                let color = 'rgba(255,255,255,0.1)';
+                let textColor = 'rgba(255, 255, 255, 0.9)'; // Default to white text
+
+                if (block.id !== 'IDLE') {
+                    // Match simplified colors from main css
+                    const pidMod = ((block.id - 1) % 3) + 1;
+                    if (pidMod === 1) { color = '#43334C'; textColor = 'white'; }
+                    if (pidMod === 2) { color = '#E83C91'; textColor = 'white'; }
+                    if (pidMod === 3) { color = '#F8F4EC'; textColor = '#43334C'; } // Dark text for light bg
+                } else {
+                    color = 'rgba(239, 68, 68, 0.4)'; // Reddish for idle in history
+                    textColor = 'white';
+                }
+                const pidText = block.id === 'IDLE' ? '' : 'P' + block.id;
+
+                miniGanttHtml += `
+                    <div class="mini-block" style="width: ${widthPct}%; background: ${color}; color: ${textColor};" title="${block.id === 'IDLE' ? 'Idle' : 'P' + block.id}">
+                        ${pidText}
+                        <span class="mini-time">${block.end}</span>
+                    </div>`;
+            });
+
+            item.innerHTML = `
+                <div class="history-header">
+                    <span class="history-algo">${algo}</span>
+                    <span class="history-time">${timeStr}</span>
+                </div>
+                <div class="history-stats-grid">
+                    <div class="h-stat">
+                        <label>AVG T.A.T</label>
+                        <span>${avgTat}</span>
+                    </div>
+                    <div class="h-stat">
+                        <label>AVG WAIT</label>
+                        <span>${avgWt}</span>
+                    </div>
+                </div>
+                <div class="mini-gantt" style="position: relative;">
+                    ${miniGanttHtml}
+                </div>
+            `;
+
+            // Prepend to top
+            list.insertBefore(item, list.firstChild);
+        }
+
+        function clearHistory() {
+            const list = document.getElementById('historyList');
+            const emptyMsg = document.getElementById('emptyHistoryMsg');
+
+            // Remove all items except the empty message
+            const items = list.querySelectorAll('.history-item');
+            items.forEach(item => item.remove());
+
+            if (emptyMsg) emptyMsg.style.display = 'block';
         }
     </script>
 </body>
