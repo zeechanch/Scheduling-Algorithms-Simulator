@@ -1023,3 +1023,42 @@ tr:hover td {
         padding: 8px 12px;
     }
 }
+
+/* ===== FOOTER ===== */
+.site-footer {
+    width: 100vw;
+    text-align: center;
+    padding: 1px 20px;
+    margin-top: 40px;
+    margin-left: -20px;
+    margin-right: -20px;
+    margin-bottom: -40px;
+    border-top: 1px solid var(--text-muted);
+    background: var(--primary);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-sizing: border-box;
+}
+
+.site-footer p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: white;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+}
+
+/* Mobile footer adjustments */
+@media (max-width: 768px) {
+    .site-footer {
+        padding: 1px 15px;
+        margin-top: 25px;
+        margin-left: -10px;
+        margin-right: -10px;
+        margin-bottom: -20px;
+    }
+
+    .site-footer p {
+        font-size: 0.8rem;
+    }
+}
