@@ -1033,8 +1033,7 @@ tr:hover td {
     margin-left: -20px;
     margin-right: -20px;
     margin-bottom: -40px;
-    border-top: 1px solid var(--text-muted);
-    background: var(--primary);
+    background: var(--text-main);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     box-sizing: border-box;
