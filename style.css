@@ -568,7 +568,7 @@ tr:hover td {
 
 /* ACTIVE STATE */
 .priority-toggle.active .toggle-switch {
-    transform: translateX(100%);
+    transform: translateX(calc(100% - 8px));
 }
 
 .priority-toggle.active .toggle-text.left {
