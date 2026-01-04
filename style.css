@@ -540,6 +540,14 @@ tr:hover td {
     filter: none;
 }
 
+/* Mobile interaction fixes */
+.priority-toggle {
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
 .toggle-text {
     width: 50%;
     text-align: center;
